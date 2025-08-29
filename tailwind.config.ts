@@ -52,6 +52,18 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				hope: {
+					DEFAULT: 'hsl(var(--hope))',
+					foreground: 'hsl(var(--hope-foreground))'
+				},
+				compassion: {
+					DEFAULT: 'hsl(var(--compassion))',
+					foreground: 'hsl(var(--compassion-foreground))'
+				},
+				trust: {
+					DEFAULT: 'hsl(var(--trust))',
+					foreground: 'hsl(var(--trust-foreground))'
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
