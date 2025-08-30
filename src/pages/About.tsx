@@ -1,6 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Users, Target, Award } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { MapPin, Users, Target, Award, Heart, Droplets, GraduationCap, Utensils } from "lucide-react";
+import { Link } from "react-router-dom";
+import aboutHero from "@/assets/about-hero.jpg";
 
 const About = () => {
   const coordinators = [
@@ -33,16 +36,35 @@ const About = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="py-16 bg-gradient-to-br from-primary/5 to-accent/5">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+      <section className="relative py-24 overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${aboutHero})` }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-accent/70"></div>
+        </div>
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">
             About Betul Abla Foundation
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Founded with a vision to bring hope and support to communities across West Africa, 
-            we are dedicated to improving lives through compassionate humanitarian action.
+          <p className="text-xl md:text-2xl opacity-95 max-w-3xl mx-auto mb-8">
+            Serving humanity with compassion across Europe and West Africa
+          </p>
+          <p className="text-lg opacity-90 max-w-2xl mx-auto">
+            Founded in Belgium by Fatima Betul Korkmaz, we bring hope and support to vulnerable communities through dedicated humanitarian action.
           </p>
         </div>
+      </section>
+
+      {/* Introduction */}
+      <section className="py-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">Our Story</h2>
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          Betul Abla Foundation was born from a deep commitment to humanitarian service. Founded in Belgium with 
+          coordinators across Nigeria, Ghana, and Ivory Coast, we bridge continents to deliver compassionate aid 
+          where it's needed most. Our work focuses on feeding the needy, supporting orphans through education, 
+          providing clean water access via boreholes, and strengthening communities across West Africa.
+        </p>
       </section>
 
       {/* Mission & Vision */}
@@ -136,22 +158,49 @@ const About = () => {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-4xl md:text-5xl font-bold mb-2">3</div>
-              <div className="text-lg opacity-90">Countries</div>
+            <div className="flex flex-col items-center">
+              <Utensils className="w-8 h-8 mb-2 opacity-90" />
+              <div className="text-4xl md:text-5xl font-bold mb-2">10K+</div>
+              <div className="text-lg opacity-90">Meals Distributed</div>
             </div>
-            <div>
+            <div className="flex flex-col items-center">
+              <Heart className="w-8 h-8 mb-2 opacity-90" />
               <div className="text-4xl md:text-5xl font-bold mb-2">500+</div>
               <div className="text-lg opacity-90">Orphans Supported</div>
             </div>
-            <div>
+            <div className="flex flex-col items-center">
+              <Droplets className="w-8 h-8 mb-2 opacity-90" />
               <div className="text-4xl md:text-5xl font-bold mb-2">50+</div>
               <div className="text-lg opacity-90">Boreholes Built</div>
             </div>
-            <div>
-              <div className="text-4xl md:text-5xl font-bold mb-2">10K+</div>
-              <div className="text-lg opacity-90">Lives Impacted</div>
+            <div className="flex flex-col items-center">
+              <GraduationCap className="w-8 h-8 mb-2 opacity-90" />
+              <div className="text-4xl md:text-5xl font-bold mb-2">200+</div>
+              <div className="text-lg opacity-90">School Fees Covered</div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="py-16 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+            Learn More About Our Work
+          </h2>
+          <p className="text-lg text-muted-foreground mb-8">
+            Discover our humanitarian projects, browse our gallery, and see how we're making a difference across West Africa.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild variant="hero" size="lg">
+              <Link to="/activities">View Our Activities</Link>
+            </Button>
+            <Button asChild variant="outline" size="lg">
+              <Link to="/gallery">Browse Gallery</Link>
+            </Button>
+            <Button asChild variant="compassion" size="lg">
+              <Link to="/projects">Our Projects</Link>
+            </Button>
           </div>
         </div>
       </section>
