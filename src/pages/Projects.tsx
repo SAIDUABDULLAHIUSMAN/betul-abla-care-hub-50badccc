@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { 
   Heart, 
   Users, 
@@ -191,8 +192,8 @@ const Projects = () => {
                           </div>
                         </div>
                         
-                        <Button variant="outline" className="w-full">
-                          View Project Details
+                        <Button variant="outline" className="w-full" asChild>
+                          <Link to="/activities">View Details</Link>
                         </Button>
                       </CardContent>
                     </Card>
@@ -271,11 +272,11 @@ const Projects = () => {
             Join us in making a lasting difference.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="secondary" size="lg">
-              View All Activities
+            <Button variant="secondary" size="lg" asChild>
+              <Link to="/activities">View All Activities</Link>
             </Button>
-            <Button variant="outline" size="lg" className="border-compassion-foreground text-compassion-foreground hover:bg-compassion-foreground hover:text-compassion">
-              Contact Us
+            <Button variant="outline" size="lg" className="border-compassion-foreground text-compassion-foreground hover:bg-compassion-foreground hover:text-compassion" asChild>
+              <Link to="/contact">Contact Us</Link>
             </Button>
           </div>
         </div>

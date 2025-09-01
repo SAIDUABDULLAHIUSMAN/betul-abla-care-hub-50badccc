@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { PlayCircle, Camera, MapPin, Calendar } from "lucide-react";
 
 const Gallery = () => {
@@ -203,8 +204,8 @@ const Gallery = () => {
           <p className="text-xl text-compassion-foreground/90 mb-8">
             Every photo and video represents lives touched by compassion. Join us in making a difference.
           </p>
-          <Button variant="secondary" size="lg">
-            Get Involved
+          <Button variant="secondary" size="lg" asChild>
+            <Link to="/contact">Get Involved</Link>
           </Button>
         </div>
       </section>

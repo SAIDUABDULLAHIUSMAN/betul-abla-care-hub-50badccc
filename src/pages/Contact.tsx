@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { 
   MapPin, 
@@ -257,8 +258,8 @@ const Contact = () => {
                 With operations across West Africa and headquarters in Belgium, 
                 we're always close to the communities we serve.
               </p>
-              <Button variant="outline">
-                View Office Locations
+              <Button variant="outline" asChild>
+                <Link to="/about">Learn More About Us</Link>
               </Button>
             </CardContent>
           </Card>
