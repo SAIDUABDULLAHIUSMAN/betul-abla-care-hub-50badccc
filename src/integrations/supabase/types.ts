@@ -14,7 +14,168 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      boreholes: {
+        Row: {
+          beneficiaries_count: number | null
+          community_name: string
+          completion_date: string | null
+          created_at: string | null
+          created_by: string | null
+          depth_meters: number | null
+          id: string
+          location: string
+          notes: string | null
+          photo_url: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          beneficiaries_count?: number | null
+          community_name: string
+          completion_date?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          depth_meters?: number | null
+          id?: string
+          location: string
+          notes?: string | null
+          photo_url?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          beneficiaries_count?: number | null
+          community_name?: string
+          completion_date?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          depth_meters?: number | null
+          id?: string
+          location?: string
+          notes?: string | null
+          photo_url?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      orphans: {
+        Row: {
+          age: number | null
+          created_at: string | null
+          created_by: string | null
+          full_name: string
+          grade_level: string | null
+          id: string
+          location: string | null
+          notes: string | null
+          photo_url: string | null
+          school_fees_covered: boolean | null
+          school_name: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          age?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          full_name: string
+          grade_level?: string | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          photo_url?: string | null
+          school_fees_covered?: boolean | null
+          school_name?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          age?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          full_name?: string
+          grade_level?: string | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          photo_url?: string | null
+          school_fees_covered?: boolean | null
+          school_name?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      outreach_activities: {
+        Row: {
+          activity_type: string
+          beneficiaries_count: number | null
+          created_at: string | null
+          created_by: string | null
+          date: string
+          description: string | null
+          id: string
+          location: string
+          photo_url: string | null
+          status: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          activity_type: string
+          beneficiaries_count?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          date: string
+          description?: string | null
+          id?: string
+          location: string
+          photo_url?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          activity_type?: string
+          beneficiaries_count?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          date?: string
+          description?: string | null
+          id?: string
+          location?: string
+          photo_url?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          full_name: string | null
+          id: string
+          role: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          full_name?: string | null
+          id: string
+          role?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
+          role?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
