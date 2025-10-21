@@ -8,14 +8,15 @@ import { Edit, Trash2, Eye } from "lucide-react";
 
 interface Orphan {
   id: string;
-  name: string;
-  age: number;
-  location: string;
-  education_status: string;
-  description: string;
-  needs: string;
-  photo_url: string;
-  status: 'pending' | 'approved' | 'rejected';
+  full_name: string;
+  age: number | null;
+  location: string | null;
+  school_name: string | null;
+  grade_level: string | null;
+  school_fees_covered: boolean;
+  photo_url: string | null;
+  notes: string | null;
+  status: string;
   created_at: string;
 }
 
@@ -122,9 +123,9 @@ export const OrphansList = () => {
               <CardHeader className="pb-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-lg">{orphan.name}</CardTitle>
+                    <CardTitle className="text-lg">{orphan.full_name}</CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      Age {orphan.age} • {orphan.location}
+                      {orphan.age && `Age ${orphan.age}`} {orphan.age && orphan.location && '•'} {orphan.location}
                     </p>
                   </div>
                   <Badge className={getStatusColor(orphan.status)}>
@@ -136,26 +137,35 @@ export const OrphansList = () => {
                 {orphan.photo_url && (
                   <img
                     src={orphan.photo_url}
-                    alt={orphan.name}
+                    alt={orphan.full_name}
                     className="w-full h-32 object-cover rounded-md mb-3"
                   />
                 )}
                 
                 <div className="space-y-2">
-                  <div>
-                    <p className="text-xs font-medium text-muted-foreground">Education</p>
-                    <p className="text-sm capitalize">{orphan.education_status.replace('_', ' ')}</p>
-                  </div>
-                  
-                  <div>
-                    <p className="text-xs font-medium text-muted-foreground">Description</p>
-                    <p className="text-sm line-clamp-2">{orphan.description}</p>
-                  </div>
-                  
-                  {orphan.needs && (
+                  {orphan.school_name && (
                     <div>
-                      <p className="text-xs font-medium text-muted-foreground">Needs</p>
-                      <p className="text-sm line-clamp-1">{orphan.needs}</p>
+                      <p className="text-xs font-medium text-muted-foreground">School</p>
+                      <p className="text-sm">{orphan.school_name}</p>
+                    </div>
+                  )}
+                  
+                  {orphan.grade_level && (
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground">Grade</p>
+                      <p className="text-sm">{orphan.grade_level}</p>
+                    </div>
+                  )}
+                  
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground">School Fees</p>
+                    <p className="text-sm">{orphan.school_fees_covered ? 'Covered ✓' : 'Not covered'}</p>
+                  </div>
+                  
+                  {orphan.notes && (
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground">Notes</p>
+                      <p className="text-sm line-clamp-2">{orphan.notes}</p>
                     </div>
                   )}
                 </div>

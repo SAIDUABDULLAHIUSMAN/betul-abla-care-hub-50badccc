@@ -9,11 +9,13 @@ import { Edit, Trash2, Eye, Calendar } from "lucide-react";
 interface OutreachActivity {
   id: string;
   title: string;
-  description: string;
+  activity_type: string;
   location: string;
-  event_date: string;
-  status: 'planned' | 'ongoing' | 'completed';
-  participants: number;
+  date: string;
+  beneficiaries_count: number | null;
+  description: string | null;
+  photo_url: string | null;
+  status: string;
   created_at: string;
 }
 
@@ -31,7 +33,7 @@ export const OutreachList = () => {
       const { data, error } = await supabase
         .from('outreach_activities')
         .select('*')
-        .order('event_date', { ascending: false });
+        .order('date', { ascending: false });
 
       if (error) throw error;
       setActivities(data || []);
@@ -47,25 +49,30 @@ export const OutreachList = () => {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'bg-hope text-hope-foreground';
-      case 'ongoing':
-        return 'bg-primary text-primary-foreground';
-      case 'planned':
-        return 'bg-secondary text-secondary-foreground';
-      default:
-        return 'bg-muted text-muted-foreground';
-    }
-  };
+  const deleteActivity = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this outreach activity?")) return;
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+    try {
+      const { error } = await supabase
+        .from('outreach_activities')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setActivities(activities.filter(activity => activity.id !== id));
+      toast({
+        title: "Success",
+        description: "Outreach activity deleted successfully.",
+      });
+    } catch (error) {
+      console.error('Error deleting outreach activity:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete outreach activity. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (isLoading) {
@@ -78,7 +85,7 @@ export const OutreachList = () => {
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Outreach Activities</h2>
           <p className="text-muted-foreground">
-            Manage community outreach events and programs.
+            Manage community outreach programs and events.
           </p>
         </div>
         <Button onClick={fetchActivities}>Refresh</Button>
@@ -90,7 +97,7 @@ export const OutreachList = () => {
             <div className="text-center">
               <p className="text-muted-foreground">No outreach activities found.</p>
               <p className="text-sm text-muted-foreground mt-2">
-                Start by planning a new outreach event.
+                Start by adding a new outreach activity.
               </p>
             </div>
           </CardContent>
@@ -101,33 +108,39 @@ export const OutreachList = () => {
             <Card key={activity.id}>
               <CardHeader className="pb-3">
                 <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-lg">{activity.title}</CardTitle>
-                    <p className="text-sm text-muted-foreground">{activity.location}</p>
-                  </div>
-                  <Badge className={getStatusColor(activity.status)}>
-                    {activity.status}
-                  </Badge>
+                  <CardTitle className="text-lg line-clamp-1">{activity.title}</CardTitle>
+                  <Badge variant="secondary">{activity.status}</Badge>
+                </div>
+                <div className="flex items-center text-sm text-muted-foreground mt-1">
+                  <Calendar className="h-3 w-3 mr-1" />
+                  {new Date(activity.date).toLocaleDateString()}
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-3 w-3 text-muted-foreground" />
-                    <p className="text-xs text-muted-foreground">
-                      {formatDate(activity.event_date)}
-                    </p>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground">Type</p>
+                    <p className="text-sm capitalize">{activity.activity_type.replace('_', ' ')}</p>
                   </div>
                   
                   <div>
-                    <p className="text-xs font-medium text-muted-foreground">Participants</p>
-                    <p className="text-sm">{activity.participants || 'TBD'}</p>
+                    <p className="text-xs font-medium text-muted-foreground">Location</p>
+                    <p className="text-sm">{activity.location}</p>
                   </div>
                   
-                  <div>
-                    <p className="text-xs font-medium text-muted-foreground">Description</p>
-                    <p className="text-sm line-clamp-3">{activity.description}</p>
-                  </div>
+                  {activity.beneficiaries_count && (
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground">Beneficiaries</p>
+                      <p className="text-sm">{activity.beneficiaries_count} people</p>
+                    </div>
+                  )}
+                  
+                  {activity.description && (
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground">Description</p>
+                      <p className="text-sm line-clamp-2">{activity.description}</p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex gap-2 mt-4">
@@ -139,7 +152,12 @@ export const OutreachList = () => {
                     <Edit className="h-3 w-3 mr-1" />
                     Edit
                   </Button>
-                  <Button size="sm" variant="outline" className="text-destructive hover:text-destructive">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => deleteActivity(activity.id)}
+                    className="text-destructive hover:text-destructive"
+                  >
                     <Trash2 className="h-3 w-3" />
                   </Button>
                 </div>

@@ -5,22 +5,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface BoreholeFormData {
-  name: string;
+  community_name: string;
   location: string;
-  status: 'planning' | 'in_progress' | 'completed';
-  description: string;
-  cost: number;
-  beneficiaries: number;
+  depth_meters: number;
+  completion_date: string;
+  beneficiaries_count: number;
+  notes: string;
 }
 
 export const BoreholeForm = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<BoreholeFormData>();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<BoreholeFormData>();
   const { toast } = useToast();
 
   const onSubmit = async (data: BoreholeFormData) => {
@@ -29,8 +28,12 @@ export const BoreholeForm = () => {
       const { error } = await supabase
         .from('boreholes')
         .insert({
-          ...data,
-          status: 'planning'
+          community_name: data.community_name,
+          location: data.location,
+          depth_meters: data.depth_meters || null,
+          completion_date: data.completion_date || null,
+          beneficiaries_count: data.beneficiaries_count || null,
+          notes: data.notes,
         });
 
       if (error) throw error;
@@ -70,14 +73,14 @@ export const BoreholeForm = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Project Name</Label>
+                <Label htmlFor="community_name">Community Name</Label>
                 <Input
-                  id="name"
-                  {...register("name", { required: "Project name is required" })}
-                  placeholder="e.g., Village Water Project"
+                  id="community_name"
+                  {...register("community_name", { required: "Community name is required" })}
+                  placeholder="e.g., Alimosho Community"
                 />
-                {errors.name && (
-                  <p className="text-sm text-destructive">{errors.name.message}</p>
+                {errors.community_name && (
+                  <p className="text-sm text-destructive">{errors.community_name.message}</p>
                 )}
               </div>
 
@@ -86,7 +89,7 @@ export const BoreholeForm = () => {
                 <Input
                   id="location"
                   {...register("location", { required: "Location is required" })}
-                  placeholder="e.g., Kumasi, Ghana"
+                  placeholder="e.g., Lagos, Nigeria"
                 />
                 {errors.location && (
                   <p className="text-sm text-destructive">{errors.location.message}</p>
@@ -96,53 +99,49 @@ export const BoreholeForm = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="cost">Estimated Cost ($)</Label>
+                <Label htmlFor="depth_meters">Depth (meters)</Label>
                 <Input
-                  id="cost"
+                  id="depth_meters"
                   type="number"
-                  {...register("cost", { 
-                    required: "Cost is required",
-                    min: { value: 1, message: "Cost must be greater than 0" }
-                  })}
-                  placeholder="Enter cost"
+                  step="0.1"
+                  {...register("depth_meters")}
+                  placeholder="e.g., 50"
                 />
-                {errors.cost && (
-                  <p className="text-sm text-destructive">{errors.cost.message}</p>
-                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="beneficiaries">Expected Beneficiaries</Label>
+                <Label htmlFor="completion_date">Completion Date</Label>
                 <Input
-                  id="beneficiaries"
-                  type="number"
-                  {...register("beneficiaries")}
-                  placeholder="Number of people who will benefit"
+                  id="completion_date"
+                  type="date"
+                  {...register("completion_date")}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Project Description</Label>
-              <Textarea
-                id="description"
-                {...register("description", { required: "Description is required" })}
-                placeholder="Describe the borehole project, its purpose, and impact"
-                rows={4}
+              <Label htmlFor="beneficiaries_count">Number of Beneficiaries</Label>
+              <Input
+                id="beneficiaries_count"
+                type="number"
+                {...register("beneficiaries_count")}
+                placeholder="e.g., 500"
               />
-              {errors.description && (
-                <p className="text-sm text-destructive">{errors.description.message}</p>
-              )}
             </div>
 
-            <div className="flex gap-4">
-              <Button type="submit" disabled={isLoading} className="flex-1">
-                {isLoading ? "Creating..." : "Create Borehole Project"}
-              </Button>
-              <Button type="button" variant="outline" onClick={() => reset()}>
-                Reset Form
-              </Button>
+            <div className="space-y-2">
+              <Label htmlFor="notes">Notes</Label>
+              <Textarea
+                id="notes"
+                {...register("notes")}
+                placeholder="Additional information about the borehole project..."
+                rows={4}
+              />
             </div>
+
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Creating..." : "Create Borehole Project"}
+            </Button>
           </form>
         </CardContent>
       </Card>

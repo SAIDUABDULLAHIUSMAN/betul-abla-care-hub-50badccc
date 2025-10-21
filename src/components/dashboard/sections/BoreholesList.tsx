@@ -8,11 +8,14 @@ import { Edit, Trash2, Eye } from "lucide-react";
 
 interface Borehole {
   id: string;
-  name: string;
   location: string;
-  status: 'planning' | 'in_progress' | 'completed';
-  description: string;
-  cost: number;
+  community_name: string;
+  depth_meters: number | null;
+  completion_date: string | null;
+  beneficiaries_count: number | null;
+  photo_url: string | null;
+  notes: string | null;
+  status: string;
   created_at: string;
 }
 
@@ -46,16 +49,29 @@ export const BoreholesList = () => {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'bg-hope text-hope-foreground';
-      case 'in_progress':
-        return 'bg-primary text-primary-foreground';
-      case 'planning':
-        return 'bg-secondary text-secondary-foreground';
-      default:
-        return 'bg-muted text-muted-foreground';
+  const deleteBorehole = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this borehole project?")) return;
+
+    try {
+      const { error } = await supabase
+        .from('boreholes')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setBoreholes(boreholes.filter(borehole => borehole.id !== id));
+      toast({
+        title: "Success",
+        description: "Borehole project deleted successfully.",
+      });
+    } catch (error) {
+      console.error('Error deleting borehole:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete borehole project. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -69,7 +85,7 @@ export const BoreholesList = () => {
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Boreholes</h2>
           <p className="text-muted-foreground">
-            Manage water projects and their progress.
+            Manage water borehole projects across communities.
           </p>
         </div>
         <Button onClick={fetchBoreholes}>Refresh</Button>
@@ -79,7 +95,7 @@ export const BoreholesList = () => {
         <Card>
           <CardContent className="flex items-center justify-center p-8">
             <div className="text-center">
-              <p className="text-muted-foreground">No boreholes found.</p>
+              <p className="text-muted-foreground">No borehole projects found.</p>
               <p className="text-sm text-muted-foreground mt-2">
                 Start by adding a new borehole project.
               </p>
@@ -92,26 +108,40 @@ export const BoreholesList = () => {
             <Card key={borehole.id}>
               <CardHeader className="pb-3">
                 <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-lg">{borehole.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground">{borehole.location}</p>
-                  </div>
-                  <Badge className={getStatusColor(borehole.status)}>
-                    {borehole.status.replace('_', ' ')}
-                  </Badge>
+                  <CardTitle className="text-lg">{borehole.community_name}</CardTitle>
+                  <Badge variant="secondary">{borehole.status}</Badge>
                 </div>
+                <p className="text-sm text-muted-foreground">{borehole.location}</p>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <div>
-                    <p className="text-xs font-medium text-muted-foreground">Cost</p>
-                    <p className="text-sm">${borehole.cost?.toLocaleString() || 'N/A'}</p>
-                  </div>
+                  {borehole.depth_meters && (
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground">Depth</p>
+                      <p className="text-sm">{borehole.depth_meters}m</p>
+                    </div>
+                  )}
                   
-                  <div>
-                    <p className="text-xs font-medium text-muted-foreground">Description</p>
-                    <p className="text-sm line-clamp-3">{borehole.description}</p>
-                  </div>
+                  {borehole.beneficiaries_count && (
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground">Beneficiaries</p>
+                      <p className="text-sm">{borehole.beneficiaries_count} people</p>
+                    </div>
+                  )}
+                  
+                  {borehole.completion_date && (
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground">Completed</p>
+                      <p className="text-sm">{new Date(borehole.completion_date).toLocaleDateString()}</p>
+                    </div>
+                  )}
+
+                  {borehole.notes && (
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground">Notes</p>
+                      <p className="text-sm line-clamp-2">{borehole.notes}</p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex gap-2 mt-4">
@@ -123,7 +153,12 @@ export const BoreholesList = () => {
                     <Edit className="h-3 w-3 mr-1" />
                     Edit
                   </Button>
-                  <Button size="sm" variant="outline" className="text-destructive hover:text-destructive">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => deleteBorehole(borehole.id)}
+                    className="text-destructive hover:text-destructive"
+                  >
                     <Trash2 className="h-3 w-3" />
                   </Button>
                 </div>

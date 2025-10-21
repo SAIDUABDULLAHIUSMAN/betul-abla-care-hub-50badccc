@@ -5,24 +5,29 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Upload } from "lucide-react";
 
 interface OrphanFormData {
-  name: string;
+  full_name: string;
   age: number;
   location: string;
-  education_status: string;
-  description: string;
-  needs: string;
+  school_name: string;
+  grade_level: string;
+  school_fees_covered: boolean;
+  notes: string;
 }
 
 export const OrphanForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<OrphanFormData>();
+  const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<OrphanFormData>({
+    defaultValues: {
+      school_fees_covered: false
+    }
+  });
   const { toast } = useToast();
 
   const onSubmit = async (data: OrphanFormData) => {
@@ -51,16 +56,21 @@ export const OrphanForm = () => {
       const { error } = await supabase
         .from('orphans')
         .insert({
-          ...data,
+          full_name: data.full_name,
+          age: data.age || null,
+          location: data.location,
+          school_name: data.school_name,
+          grade_level: data.grade_level,
+          school_fees_covered: data.school_fees_covered,
+          notes: data.notes,
           photo_url: imageUrl,
-          status: 'pending'
         });
 
       if (error) throw error;
 
       toast({
         title: "Success",
-        description: "Orphan profile created successfully and is pending approval.",
+        description: "Orphan profile created successfully.",
       });
 
       reset();
@@ -88,26 +98,26 @@ export const OrphanForm = () => {
       <div>
         <h2 className="text-3xl font-bold tracking-tight">Add New Orphan</h2>
         <p className="text-muted-foreground">
-          Create a new orphan profile for the foundation's care program.
+          Create a new orphan profile and sponsorship information.
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Orphan Information</CardTitle>
+          <CardTitle>Orphan Profile Information</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="full_name">Full Name</Label>
                 <Input
-                  id="name"
-                  {...register("name", { required: "Name is required" })}
-                  placeholder="Enter full name"
+                  id="full_name"
+                  {...register("full_name", { required: "Full name is required" })}
+                  placeholder="e.g., John Doe"
                 />
-                {errors.name && (
-                  <p className="text-sm text-destructive">{errors.name.message}</p>
+                {errors.full_name && (
+                  <p className="text-sm text-destructive">{errors.full_name.message}</p>
                 )}
               </div>
 
@@ -116,102 +126,81 @@ export const OrphanForm = () => {
                 <Input
                   id="age"
                   type="number"
-                  {...register("age", { 
-                    required: "Age is required",
-                    min: { value: 1, message: "Age must be at least 1" },
-                    max: { value: 18, message: "Age must be 18 or under" }
-                  })}
-                  placeholder="Enter age"
+                  {...register("age")}
+                  placeholder="e.g., 12"
                 />
-                {errors.age && (
-                  <p className="text-sm text-destructive">{errors.age.message}</p>
-                )}
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="location">Location</Label>
+              <Input
+                id="location"
+                {...register("location")}
+                placeholder="e.g., Lagos, Nigeria"
+              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
+                <Label htmlFor="school_name">School Name</Label>
                 <Input
-                  id="location"
-                  {...register("location", { required: "Location is required" })}
-                  placeholder="e.g., Lagos, Nigeria"
+                  id="school_name"
+                  {...register("school_name")}
+                  placeholder="e.g., Community Primary School"
                 />
-                {errors.location && (
-                  <p className="text-sm text-destructive">{errors.location.message}</p>
-                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="education_status">Education Status</Label>
-                <Select onValueChange={(value) => setValue("education_status", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select education status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="not_enrolled">Not Enrolled</SelectItem>
-                    <SelectItem value="primary">Primary School</SelectItem>
-                    <SelectItem value="secondary">Secondary School</SelectItem>
-                    <SelectItem value="completed">Completed Education</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="grade_level">Grade Level</Label>
+                <Input
+                  id="grade_level"
+                  {...register("grade_level")}
+                  placeholder="e.g., Grade 5"
+                />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                {...register("description", { required: "Description is required" })}
-                placeholder="Brief description about the orphan's background and situation"
-                rows={3}
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="school_fees_covered"
+                checked={watch("school_fees_covered")}
+                onCheckedChange={(checked) => setValue("school_fees_covered", checked === true)}
               />
-              {errors.description && (
-                <p className="text-sm text-destructive">{errors.description.message}</p>
-              )}
+              <Label htmlFor="school_fees_covered" className="cursor-pointer">
+                School fees covered
+              </Label>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="needs">Specific Needs</Label>
+              <Label htmlFor="notes">Notes</Label>
               <Textarea
-                id="needs"
-                {...register("needs")}
-                placeholder="List specific needs (e.g., medical care, school supplies, etc.)"
-                rows={2}
+                id="notes"
+                {...register("notes")}
+                placeholder="Additional information about the orphan..."
+                rows={4}
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="photo">Photo</Label>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
                 <Input
                   id="photo"
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
-                  className="hidden"
+                  className="cursor-pointer"
                 />
-                <Label
-                  htmlFor="photo"
-                  className="flex items-center gap-2 px-4 py-2 border rounded-md cursor-pointer hover:bg-muted"
-                >
-                  <Upload className="h-4 w-4" />
-                  Choose Photo
-                </Label>
                 {imageFile && (
                   <span className="text-sm text-muted-foreground">{imageFile.name}</span>
                 )}
               </div>
             </div>
 
-            <div className="flex gap-4">
-              <Button type="submit" disabled={isLoading} className="flex-1">
-                {isLoading ? "Creating..." : "Create Orphan Profile"}
-              </Button>
-              <Button type="button" variant="outline" onClick={() => reset()}>
-                Reset Form
-              </Button>
-            </div>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Creating..." : "Create Orphan Profile"}
+            </Button>
           </form>
         </CardContent>
       </Card>

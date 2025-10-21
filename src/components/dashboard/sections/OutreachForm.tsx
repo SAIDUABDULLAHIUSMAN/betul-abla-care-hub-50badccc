@@ -5,20 +5,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface OutreachFormData {
   title: string;
-  description: string;
+  activity_type: string;
   location: string;
-  event_date: string;
-  participants: number;
+  date: string;
+  beneficiaries_count: number;
+  description: string;
 }
 
 export const OutreachForm = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<OutreachFormData>();
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<OutreachFormData>();
   const { toast } = useToast();
 
   const onSubmit = async (data: OutreachFormData) => {
@@ -27,8 +29,12 @@ export const OutreachForm = () => {
       const { error } = await supabase
         .from('outreach_activities')
         .insert({
-          ...data,
-          status: 'planned'
+          title: data.title,
+          activity_type: data.activity_type,
+          location: data.location,
+          date: data.date,
+          beneficiaries_count: data.beneficiaries_count || null,
+          description: data.description,
         });
 
       if (error) throw error;
@@ -78,13 +84,33 @@ export const OutreachForm = () => {
               )}
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="activity_type">Activity Type</Label>
+              <Select onValueChange={(value) => setValue("activity_type", value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select activity type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="food_distribution">Food Distribution</SelectItem>
+                  <SelectItem value="medical_outreach">Medical Outreach</SelectItem>
+                  <SelectItem value="education">Education Support</SelectItem>
+                  <SelectItem value="clothing_distribution">Clothing Distribution</SelectItem>
+                  <SelectItem value="community_visit">Community Visit</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.activity_type && (
+                <p className="text-sm text-destructive">{errors.activity_type.message}</p>
+              )}
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="location">Location</Label>
                 <Input
                   id="location"
                   {...register("location", { required: "Location is required" })}
-                  placeholder="e.g., Abidjan, Ivory Coast"
+                  placeholder="e.g., Accra, Ghana"
                 />
                 {errors.location && (
                   <p className="text-sm text-destructive">{errors.location.message}</p>
@@ -92,49 +118,41 @@ export const OutreachForm = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="event_date">Event Date</Label>
+                <Label htmlFor="date">Event Date</Label>
                 <Input
-                  id="event_date"
+                  id="date"
                   type="date"
-                  {...register("event_date", { required: "Event date is required" })}
+                  {...register("date", { required: "Date is required" })}
                 />
-                {errors.event_date && (
-                  <p className="text-sm text-destructive">{errors.event_date.message}</p>
+                {errors.date && (
+                  <p className="text-sm text-destructive">{errors.date.message}</p>
                 )}
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="participants">Expected Participants</Label>
+              <Label htmlFor="beneficiaries_count">Number of Beneficiaries</Label>
               <Input
-                id="participants"
+                id="beneficiaries_count"
                 type="number"
-                {...register("participants")}
-                placeholder="Estimated number of participants"
+                {...register("beneficiaries_count")}
+                placeholder="e.g., 200"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Activity Description</Label>
+              <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
-                {...register("description", { required: "Description is required" })}
-                placeholder="Describe the outreach activity, its goals, and expected impact"
+                {...register("description")}
+                placeholder="Describe the outreach activity..."
                 rows={4}
               />
-              {errors.description && (
-                <p className="text-sm text-destructive">{errors.description.message}</p>
-              )}
             </div>
 
-            <div className="flex gap-4">
-              <Button type="submit" disabled={isLoading} className="flex-1">
-                {isLoading ? "Creating..." : "Create Outreach Activity"}
-              </Button>
-              <Button type="button" variant="outline" onClick={() => reset()}>
-                Reset Form
-              </Button>
-            </div>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Creating..." : "Create Outreach Activity"}
+            </Button>
           </form>
         </CardContent>
       </Card>
