@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
@@ -15,14 +15,6 @@ const Dashboard = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!isSupabaseConfigured) {
-      toast({
-        title: "Dashboard unavailable",
-        description: "Connect Supabase (green button, top-right) to enable staff features.",
-      });
-      return;
-    }
-
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       
@@ -60,19 +52,6 @@ const Dashboard = () => {
       navigate("/");
     }
   };
-
-  if (!isSupabaseConfigured) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-6 text-center">
-        <div>
-          <h1 className="text-2xl font-semibold mb-2">Dashboard requires Supabase</h1>
-          <p className="text-muted-foreground max-w-md">
-            Connect Supabase (green button, top-right) to enable authentication and data management.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   if (!user) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
