@@ -25,15 +25,16 @@ const Dashboard = () => {
       
       setUser(session.user);
       
-      // Get user role from profiles table
-      const { data: profile } = await supabase
-        .from('profiles')
+      // Get user role from user_roles table
+      const { data: userRoles } = await supabase
+        .from('user_roles')
         .select('role')
-        .eq('id', session.user.id)
+        .eq('user_id', session.user.id)
+        .limit(1)
         .single();
         
-      if (profile) {
-        setUserRole(profile.role);
+      if (userRoles) {
+        setUserRole(userRoles.role);
       }
     };
 

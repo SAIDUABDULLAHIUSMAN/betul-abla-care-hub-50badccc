@@ -14,6 +14,9 @@ import Gallery from "./pages/Gallery";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import OrphansSupport from "./pages/OrphansSupport";
+import WaterProjects from "./pages/WaterProjects";
+import CommunityOutreach from "./pages/CommunityOutreach";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 import NotFound from "./pages/NotFound";
 
@@ -34,6 +37,9 @@ const App = () => (
                 <Route path="/about" element={<About />} />
                 <Route path="/activities" element={<Activities />} />
                 <Route path="/projects" element={<Projects />} />
+                <Route path="/projects/orphans" element={<OrphansSupport />} />
+                <Route path="/projects/water" element={<WaterProjects />} />
+                <Route path="/projects/outreach" element={<CommunityOutreach />} />
                 <Route path="/gallery" element={<Gallery />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/login" element={<Login />} />
