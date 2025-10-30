@@ -19,12 +19,32 @@ interface BoreholeFormData {
 
 export const BoreholeForm = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const { register, handleSubmit, reset, formState: { errors } } = useForm<BoreholeFormData>();
   const { toast } = useToast();
 
   const onSubmit = async (data: BoreholeFormData) => {
     setIsLoading(true);
     try {
+      let imageUrl = null;
+
+      // Upload image if provided
+      if (imageFile) {
+        const fileExt = imageFile.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from('boreholes')
+          .upload(fileName, imageFile);
+
+        if (uploadError) throw uploadError;
+        
+        const { data: { publicUrl } } = supabase.storage
+          .from('boreholes')
+          .getPublicUrl(fileName);
+        
+        imageUrl = publicUrl;
+      }
+
       const { error } = await supabase
         .from('boreholes')
         .insert({
@@ -34,6 +54,7 @@ export const BoreholeForm = () => {
           completion_date: data.completion_date || null,
           beneficiaries_count: data.beneficiaries_count || null,
           notes: data.notes,
+          photo_url: imageUrl,
         });
 
       if (error) throw error;
@@ -44,6 +65,7 @@ export const BoreholeForm = () => {
       });
 
       reset();
+      setImageFile(null);
     } catch (error) {
       console.error('Error creating borehole:', error);
       toast({
@@ -53,6 +75,12 @@ export const BoreholeForm = () => {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
     }
   };
 
@@ -137,6 +165,22 @@ export const BoreholeForm = () => {
                 placeholder="Additional information about the borehole project..."
                 rows={4}
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="photo">Photo</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="photo"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="cursor-pointer"
+                />
+                {imageFile && (
+                  <span className="text-sm text-muted-foreground">{imageFile.name}</span>
+                )}
+              </div>
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>

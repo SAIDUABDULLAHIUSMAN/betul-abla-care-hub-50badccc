@@ -40,13 +40,13 @@ export const OrphanForm = () => {
         const fileExt = imageFile.name.split('.').pop();
         const fileName = `${Math.random()}.${fileExt}`;
         const { error: uploadError } = await supabase.storage
-          .from('orphan-photos')
+          .from('orphans')
           .upload(fileName, imageFile);
 
         if (uploadError) throw uploadError;
         
         const { data: { publicUrl } } = supabase.storage
-          .from('orphan-photos')
+          .from('orphans')
           .getPublicUrl(fileName);
         
         imageUrl = publicUrl;
