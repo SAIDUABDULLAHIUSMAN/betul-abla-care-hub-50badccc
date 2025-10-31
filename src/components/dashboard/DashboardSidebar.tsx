@@ -18,7 +18,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 interface DashboardSidebarProps {
@@ -34,6 +34,7 @@ export const DashboardSidebar = ({
   userRole, 
   onLogout 
 }: DashboardSidebarProps) => {
+  const { state } = useSidebar();
   const menuItems = [
     { id: "overview", label: "Dashboard", icon: LayoutDashboard },
     { id: "orphans", label: "Orphans", icon: Users },
@@ -50,23 +51,27 @@ export const DashboardSidebar = ({
     { id: "user-management", label: "User Management", icon: Settings },
   ];
 
+  const isCollapsed = state === "collapsed";
+
   return (
-    <Sidebar className="border-r border-sidebar-border">
+    <Sidebar className="border-r border-sidebar-border" collapsible="icon">
       <div className="p-4 border-b border-sidebar-border">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
             <HandHeart className="h-4 w-4 text-primary-foreground" />
           </div>
-          <div>
-            <h2 className="text-sm font-semibold text-sidebar-foreground">Betul Abla Foundation</h2>
-            <p className="text-xs text-sidebar-foreground/60">Admin Dashboard</p>
-          </div>
+          {!isCollapsed && (
+            <div>
+              <h2 className="text-sm font-semibold text-sidebar-foreground">Betul Abla Foundation</h2>
+              <p className="text-xs text-sidebar-foreground/60">Admin Dashboard</p>
+            </div>
+          )}
         </div>
       </div>
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Main Menu</SidebarGroupLabel>
+          {!isCollapsed && <SidebarGroupLabel>Main Menu</SidebarGroupLabel>}
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
@@ -75,9 +80,10 @@ export const DashboardSidebar = ({
                     onClick={() => setActiveSection(item.id)}
                     isActive={activeSection === item.id}
                     className="w-full justify-start"
+                    tooltip={isCollapsed ? item.label : undefined}
                   >
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.label}</span>
+                    <item.icon className="h-5 w-5 shrink-0" />
+                    {!isCollapsed && <span>{item.label}</span>}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -87,7 +93,7 @@ export const DashboardSidebar = ({
 
         {userRole === "admin" && (
           <SidebarGroup>
-            <SidebarGroupLabel>Admin</SidebarGroupLabel>
+            {!isCollapsed && <SidebarGroupLabel>Admin</SidebarGroupLabel>}
             <SidebarGroupContent>
               <SidebarMenu>
                 {adminItems.map((item) => (
@@ -96,9 +102,10 @@ export const DashboardSidebar = ({
                       onClick={() => setActiveSection(item.id)}
                       isActive={activeSection === item.id}
                       className="w-full justify-start"
+                      tooltip={isCollapsed ? item.label : undefined}
                     >
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.label}</span>
+                      <item.icon className="h-5 w-5 shrink-0" />
+                      {!isCollapsed && <span>{item.label}</span>}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -115,18 +122,20 @@ export const DashboardSidebar = ({
                   onClick={() => setActiveSection("settings")}
                   isActive={activeSection === "settings"}
                   className="w-full justify-start"
+                  tooltip={isCollapsed ? "Settings" : undefined}
                 >
-                  <Settings className="h-4 w-4" />
-                  <span>Settings</span>
+                  <Settings className="h-5 w-5 shrink-0" />
+                  {!isCollapsed && <span>Settings</span>}
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={onLogout}
                   className="w-full justify-start text-destructive hover:text-destructive"
+                  tooltip={isCollapsed ? "Logout" : undefined}
                 >
-                  <LogOut className="h-4 w-4" />
-                  <span>Logout</span>
+                  <LogOut className="h-5 w-5 shrink-0" />
+                  {!isCollapsed && <span>Logout</span>}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
