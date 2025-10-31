@@ -5,6 +5,13 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Edit, Trash2, Eye } from "lucide-react";
+import { BoreholeEditModal } from "../modals/BoreholeEditModal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Borehole {
   id: string;
@@ -22,6 +29,9 @@ interface Borehole {
 export const BoreholesList = () => {
   const [boreholes, setBoreholes] = useState<Borehole[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedBorehole, setSelectedBorehole] = useState<Borehole | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -145,11 +155,27 @@ export const BoreholesList = () => {
                 </div>
 
                 <div className="flex gap-2 mt-4">
-                  <Button size="sm" variant="outline" className="flex-1">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => {
+                      setSelectedBorehole(borehole);
+                      setIsViewModalOpen(true);
+                    }}
+                  >
                     <Eye className="h-3 w-3 mr-1" />
                     View
                   </Button>
-                  <Button size="sm" variant="outline" className="flex-1">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => {
+                      setSelectedBorehole(borehole);
+                      setIsEditModalOpen(true);
+                    }}
+                  >
                     <Edit className="h-3 w-3 mr-1" />
                     Edit
                   </Button>
@@ -166,6 +192,68 @@ export const BoreholesList = () => {
             </Card>
           ))}
         </div>
+      )}
+
+      {selectedBorehole && (
+        <>
+          <BoreholeEditModal
+            borehole={selectedBorehole}
+            open={isEditModalOpen}
+            onOpenChange={setIsEditModalOpen}
+            onSuccess={fetchBoreholes}
+          />
+          
+          <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>{selectedBorehole.community_name}</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                {selectedBorehole.photo_url && (
+                  <img 
+                    src={selectedBorehole.photo_url} 
+                    alt={selectedBorehole.community_name}
+                    className="w-full h-64 object-cover rounded-lg"
+                  />
+                )}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Location</p>
+                    <p className="font-medium">{selectedBorehole.location}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Status</p>
+                    <Badge variant={selectedBorehole.status === 'approved' ? 'default' : 'secondary'}>
+                      {selectedBorehole.status}
+                    </Badge>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Depth</p>
+                    <p className="font-medium">{selectedBorehole.depth_meters ? `${selectedBorehole.depth_meters}m` : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Beneficiaries</p>
+                    <p className="font-medium">{selectedBorehole.beneficiaries_count || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Completion Date</p>
+                    <p className="font-medium">
+                      {selectedBorehole.completion_date 
+                        ? new Date(selectedBorehole.completion_date).toLocaleDateString()
+                        : 'N/A'}
+                    </p>
+                  </div>
+                </div>
+                {selectedBorehole.notes && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Notes</p>
+                    <p className="font-medium">{selectedBorehole.notes}</p>
+                  </div>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
+        </>
       )}
     </div>
   );

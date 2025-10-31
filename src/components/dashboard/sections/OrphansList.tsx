@@ -5,6 +5,13 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Edit, Trash2, Eye } from "lucide-react";
+import { OrphanEditModal } from "../modals/OrphanEditModal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Orphan {
   id: string;
@@ -23,6 +30,9 @@ interface Orphan {
 export const OrphansList = () => {
   const [orphans, setOrphans] = useState<Orphan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedOrphan, setSelectedOrphan] = useState<Orphan | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -171,11 +181,27 @@ export const OrphansList = () => {
                 </div>
 
                 <div className="flex gap-2 mt-4">
-                  <Button size="sm" variant="outline" className="flex-1">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => {
+                      setSelectedOrphan(orphan);
+                      setIsViewModalOpen(true);
+                    }}
+                  >
                     <Eye className="h-3 w-3 mr-1" />
                     View
                   </Button>
-                  <Button size="sm" variant="outline" className="flex-1">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => {
+                      setSelectedOrphan(orphan);
+                      setIsEditModalOpen(true);
+                    }}
+                  >
                     <Edit className="h-3 w-3 mr-1" />
                     Edit
                   </Button>
@@ -192,6 +218,70 @@ export const OrphansList = () => {
             </Card>
           ))}
         </div>
+      )}
+
+      {selectedOrphan && (
+        <>
+          <OrphanEditModal
+            orphan={selectedOrphan}
+            open={isEditModalOpen}
+            onOpenChange={setIsEditModalOpen}
+            onSuccess={fetchOrphans}
+          />
+          
+          <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>{selectedOrphan.full_name}</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                {selectedOrphan.photo_url && (
+                  <img 
+                    src={selectedOrphan.photo_url} 
+                    alt={selectedOrphan.full_name}
+                    className="w-full h-64 object-cover rounded-lg"
+                  />
+                )}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Age</p>
+                    <p className="font-medium">{selectedOrphan.age || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Location</p>
+                    <p className="font-medium">{selectedOrphan.location || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">School</p>
+                    <p className="font-medium">{selectedOrphan.school_name || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Grade Level</p>
+                    <p className="font-medium">{selectedOrphan.grade_level || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">School Fees</p>
+                    <Badge variant={selectedOrphan.school_fees_covered ? "default" : "secondary"}>
+                      {selectedOrphan.school_fees_covered ? "Covered" : "Not Covered"}
+                    </Badge>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Status</p>
+                    <Badge className={getStatusColor(selectedOrphan.status)}>
+                      {selectedOrphan.status}
+                    </Badge>
+                  </div>
+                </div>
+                {selectedOrphan.notes && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Notes</p>
+                    <p className="font-medium">{selectedOrphan.notes}</p>
+                  </div>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
+        </>
       )}
     </div>
   );

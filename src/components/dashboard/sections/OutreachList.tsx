@@ -5,6 +5,13 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Edit, Trash2, Eye, Calendar } from "lucide-react";
+import { OutreachEditModal } from "../modals/OutreachEditModal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface OutreachActivity {
   id: string;
@@ -22,6 +29,9 @@ interface OutreachActivity {
 export const OutreachList = () => {
   const [activities, setActivities] = useState<OutreachActivity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedActivity, setSelectedActivity] = useState<OutreachActivity | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -144,11 +154,27 @@ export const OutreachList = () => {
                 </div>
 
                 <div className="flex gap-2 mt-4">
-                  <Button size="sm" variant="outline" className="flex-1">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => {
+                      setSelectedActivity(activity);
+                      setIsViewModalOpen(true);
+                    }}
+                  >
                     <Eye className="h-3 w-3 mr-1" />
                     View
                   </Button>
-                  <Button size="sm" variant="outline" className="flex-1">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => {
+                      setSelectedActivity(activity);
+                      setIsEditModalOpen(true);
+                    }}
+                  >
                     <Edit className="h-3 w-3 mr-1" />
                     Edit
                   </Button>
@@ -165,6 +191,66 @@ export const OutreachList = () => {
             </Card>
           ))}
         </div>
+      )}
+
+      {selectedActivity && (
+        <>
+          <OutreachEditModal
+            activity={selectedActivity}
+            open={isEditModalOpen}
+            onOpenChange={setIsEditModalOpen}
+            onSuccess={fetchActivities}
+          />
+          
+          <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>{selectedActivity.title}</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                {selectedActivity.photo_url && (
+                  <img 
+                    src={selectedActivity.photo_url} 
+                    alt={selectedActivity.title}
+                    className="w-full h-64 object-cover rounded-lg"
+                  />
+                )}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Activity Type</p>
+                    <p className="font-medium">{selectedActivity.activity_type}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Location</p>
+                    <p className="font-medium">{selectedActivity.location}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Date</p>
+                    <p className="font-medium">
+                      {new Date(selectedActivity.date).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Beneficiaries</p>
+                    <p className="font-medium">{selectedActivity.beneficiaries_count || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Status</p>
+                    <Badge variant={selectedActivity.status === 'approved' ? 'default' : 'secondary'}>
+                      {selectedActivity.status}
+                    </Badge>
+                  </div>
+                </div>
+                {selectedActivity.description && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Description</p>
+                    <p className="font-medium">{selectedActivity.description}</p>
+                  </div>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
+        </>
       )}
     </div>
   );

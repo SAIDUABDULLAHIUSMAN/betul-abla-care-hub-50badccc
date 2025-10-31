@@ -1,11 +1,97 @@
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { User, Lock, Bell, Globe } from "lucide-react";
+import { Bell, Moon, Sun } from "lucide-react";
+import { useTheme } from "@/providers/ThemeProvider";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 export const DashboardSettings = () => {
+  const { theme, setTheme } = useTheme();
+  const { toast } = useToast();
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [pushNotifications, setPushNotifications] = useState(true);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadPreferences();
+  }, []);
+
+  const loadPreferences = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data } = await supabase
+        .from('user_preferences')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (data) {
+        setEmailNotifications(data.email_notifications ?? true);
+        setPushNotifications(data.push_notifications ?? true);
+      }
+    } catch (error) {
+      console.error('Error loading preferences:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updatePreference = async (field: string, value: boolean) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      await supabase
+        .from('user_preferences')
+        .upsert({
+          user_id: user.id,
+          [field]: value
+        }, {
+          onConflict: 'user_id'
+        });
+
+      toast({
+        title: "Settings updated",
+        description: "Your preferences have been saved.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update preferences",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleEmailNotificationsToggle = async () => {
+    const newValue = !emailNotifications;
+    setEmailNotifications(newValue);
+    await updatePreference('email_notifications', newValue);
+  };
+
+  const handlePushNotificationsToggle = async () => {
+    const newValue = !pushNotifications;
+    setPushNotifications(newValue);
+    await updatePreference('push_notifications', newValue);
+  };
+
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+    toast({
+      title: "Theme updated",
+      description: `Switched to ${theme === "light" ? "dark" : "light"} mode`,
+    });
+  };
+
+  if (loading) {
+    return <div>Loading settings...</div>;
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -19,56 +105,6 @@ export const DashboardSettings = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5" />
-              Profile Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input id="firstName" placeholder="Enter your first name" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input id="lastName" placeholder="Enter your last name" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="Enter your email" />
-            </div>
-            <Button>Update Profile</Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Lock className="h-5 w-5" />
-              Security
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="currentPassword">Current Password</Label>
-              <Input id="currentPassword" type="password" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="newPassword">New Password</Label>
-              <Input id="newPassword" type="password" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
-              <Input id="confirmPassword" type="password" />
-            </div>
-            <Button>Change Password</Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
               <Bell className="h-5 w-5" />
               Notifications
             </CardTitle>
@@ -79,7 +115,10 @@ export const DashboardSettings = () => {
                 <p className="font-medium">Email Notifications</p>
                 <p className="text-sm text-muted-foreground">Receive email updates about activities</p>
               </div>
-              <Button variant="outline" size="sm">Toggle</Button>
+              <Switch 
+                checked={emailNotifications}
+                onCheckedChange={handleEmailNotificationsToggle}
+              />
             </div>
             <Separator />
             <div className="flex items-center justify-between">
@@ -87,7 +126,10 @@ export const DashboardSettings = () => {
                 <p className="font-medium">Push Notifications</p>
                 <p className="text-sm text-muted-foreground">Receive push notifications for urgent updates</p>
               </div>
-              <Button variant="outline" size="sm">Toggle</Button>
+              <Switch 
+                checked={pushNotifications}
+                onCheckedChange={handlePushNotificationsToggle}
+              />
             </div>
           </CardContent>
         </Card>
@@ -95,25 +137,19 @@ export const DashboardSettings = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Globe className="h-5 w-5" />
-              Preferences
+              {theme === "light" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              Appearance
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium">Language</p>
-                <p className="text-sm text-muted-foreground">Choose your preferred language</p>
-              </div>
-              <Button variant="outline" size="sm">English</Button>
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div>
                 <p className="font-medium">Theme</p>
                 <p className="text-sm text-muted-foreground">Choose light or dark mode</p>
               </div>
-              <Button variant="outline" size="sm">Light</Button>
+              <Button variant="outline" size="sm" onClick={toggleTheme}>
+                {theme === "light" ? "Light" : "Dark"}
+              </Button>
             </div>
           </CardContent>
         </Card>
