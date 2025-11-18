@@ -102,83 +102,82 @@ const Contact = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="py-16 bg-gradient-to-br from-primary/10 to-compassion/10">
+      <section className="py-12 md:py-16 bg-gradient-to-br from-primary/10 to-compassion/10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 md:mb-6">
             Contact Us
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-base md:text-xl text-muted-foreground max-w-3xl mx-auto">
             Get in touch with our team. We're here to answer your questions, 
             discuss partnerships, or provide information about our humanitarian work.
           </p>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
           {/* Contact Form */}
           <div>
             <Card>
               <CardHeader>
-                <CardTitle className="text-2xl flex items-center">
-                  <MessageCircle className="w-6 h-6 mr-2 text-primary" />
+                <CardTitle className="text-xl md:text-2xl flex items-center">
+                  <MessageCircle className="w-5 h-5 md:w-6 md:h-6 mr-2 text-primary" />
                   Send us a Message
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Full Name</Label>
-                      <Input
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        placeholder="Your name"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email Address</Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        placeholder="your.email@example.com"
-                      />
-                    </div>
+                <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
+                  <div>
+                    <Label htmlFor="name" className="text-sm md:text-base">Your Name</Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="John Doe"
+                      required
+                      className="text-sm md:text-base"
+                    />
                   </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="subject">Subject</Label>
+                  <div>
+                    <Label htmlFor="email" className="text-sm md:text-base">Email Address</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="john@example.com"
+                      required
+                      className="text-sm md:text-base"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="subject" className="text-sm md:text-base">Subject</Label>
                     <Input
                       id="subject"
                       name="subject"
                       value={formData.subject}
                       onChange={handleChange}
-                      required
                       placeholder="How can we help you?"
+                      required
+                      className="text-sm md:text-base"
                     />
                   </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="message">Message</Label>
+                  <div>
+                    <Label htmlFor="message" className="text-sm md:text-base">Message</Label>
                     <Textarea
                       id="message"
                       name="message"
                       value={formData.message}
                       onChange={handleChange}
-                      required
-                      rows={6}
                       placeholder="Tell us more about your inquiry..."
+                      rows={6}
+                      required
+                      className="text-sm md:text-base"
                     />
                   </div>
-                  
-                  <Button type="submit" className="w-full" variant="hero">
+                  <Button type="submit" className="w-full text-sm md:text-base">
                     <Send className="w-4 h-4 mr-2" />
                     Send Message
                   </Button>
@@ -188,29 +187,25 @@ const Contact = () => {
           </div>
 
           {/* Contact Information */}
-          <div className="space-y-8">
-            {/* Quick Contact Info */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-6 md:space-y-8">
+            {/* Contact Info Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 md:gap-6">
               {contactInfo.map((info, index) => {
-                const IconComponent = info.icon;
+                const Icon = info.icon;
                 return (
-                  <Card key={index} className="hover:shadow-md transition-shadow">
-                    <CardContent className="p-6">
-                      <div className="flex items-start space-x-4">
-                        <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <IconComponent className="w-6 h-6 text-primary" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-foreground mb-1">
-                            {info.title}
-                          </h3>
-                          {info.details.map((detail, idx) => (
-                            <p key={idx} className="text-muted-foreground text-sm">
-                              {detail}
-                            </p>
-                          ))}
-                        </div>
-                      </div>
+                  <Card key={index}>
+                    <CardHeader>
+                      <CardTitle className="text-base md:text-lg flex items-center gap-2">
+                        <Icon className={`w-5 h-5 md:w-6 md:h-6 text-${info.color}`} />
+                        {info.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {info.details.map((detail, idx) => (
+                        <p key={idx} className="text-sm md:text-base text-muted-foreground mb-1">
+                          {detail}
+                        </p>
+                      ))}
                     </CardContent>
                   </Card>
                 );
@@ -220,23 +215,16 @@ const Contact = () => {
             {/* Regional Offices */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-xl">Regional Offices</CardTitle>
+                <CardTitle className="text-lg md:text-xl">Regional Offices</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {offices.map((office, index) => (
-                  <div key={index} className="border-l-4 border-l-primary pl-4 py-2">
-                    <div className="flex items-center mb-1">
-                      <MapPin className="w-4 h-4 mr-2 text-muted-foreground" />
-                      <span className="font-semibold text-foreground">
-                        {office.city}, {office.country}
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-1">
-                      {office.contact} - {office.role}
-                    </p>
-                    <p className="text-sm text-primary">
-                      {office.email}
-                    </p>
+                  <div key={index} className="pb-4 border-b last:border-0 last:pb-0">
+                    <h3 className="font-semibold text-base md:text-lg mb-1">{office.country}</h3>
+                    <p className="text-xs md:text-sm text-muted-foreground mb-2">{office.city}</p>
+                    <p className="text-sm md:text-base font-medium">{office.contact}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground mb-1">{office.role}</p>
+                    <p className="text-xs md:text-sm text-primary">{office.email}</p>
                   </div>
                 ))}
               </CardContent>
@@ -244,25 +232,23 @@ const Contact = () => {
           </div>
         </div>
       </div>
+      </div>
 
-      {/* Map Section Placeholder */}
-      <section className="py-16 bg-muted/30">
+      {/* Map Section */}
+      <section className="py-12 md:py-16 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Card>
-            <CardContent className="p-8 text-center">
-              <MapPin className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-2xl font-semibold text-foreground mb-4">
-                Our Global Presence
-              </h3>
-              <p className="text-muted-foreground mb-6">
-                With operations across West Africa and headquarters in Belgium, 
-                we're always close to the communities we serve.
-              </p>
-              <Button variant="outline" asChild>
-                <Link to="/about">Learn More About Us</Link>
-              </Button>
-            </CardContent>
-          </Card>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6 md:mb-8">
+            Our Presence
+          </h2>
+          <p className="text-base md:text-lg text-muted-foreground text-center mb-8 md:mb-12 max-w-2xl mx-auto px-4">
+            With operations spanning from Belgium to West Africa, we're connected across continents to serve communities where they need us most.
+          </p>
+          <div className="bg-muted rounded-lg p-6 md:p-8 text-center">
+            <MapPin className="w-12 h-12 md:w-16 md:h-16 text-primary mx-auto mb-4" />
+            <p className="text-sm md:text-lg text-muted-foreground">
+              Interactive map showing our offices in Belgium, Nigeria, Ghana, and Ivory Coast
+            </p>
+          </div>
         </div>
       </section>
     </div>

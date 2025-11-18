@@ -114,51 +114,47 @@ const Activities = () => {
       </section>
 
       {/* Activities Grid */}
-      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <section className="py-12 md:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
           {activities.map((activity) => {
-            const IconComponent = activity.icon;
+            const Icon = activity.icon;
             return (
-              <Card key={activity.id} className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-primary">
-                <CardHeader className="pb-4">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <IconComponent className="w-6 h-6 text-primary" />
-                    </div>
-                    <Badge className={getStatusColor(activity.status)}>
+              <Card key={activity.id} className="hover:shadow-lg transition-all group">
+                <CardHeader>
+                  <div className="flex items-start justify-between mb-3 md:mb-4">
+                    <Icon className={`w-10 h-10 md:w-12 md:h-12 text-${activity.color}`} />
+                    <Badge className={`${getStatusColor(activity.status)} text-xs`}>
                       {activity.status}
                     </Badge>
                   </div>
-                  
-                  <CardTitle className="text-xl mb-2">{activity.title}</CardTitle>
-                  <Badge variant="outline" className="w-fit mb-4">
+                  <CardTitle className="text-xl md:text-2xl mb-2">{activity.title}</CardTitle>
+                  <Badge variant="secondary" className="w-fit mb-3 text-xs">
                     {activity.category}
                   </Badge>
                 </CardHeader>
-                
-                <CardContent className="space-y-4">
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                <CardContent>
+                  <p className="text-sm md:text-base text-muted-foreground mb-4 md:mb-6 line-clamp-3">
                     {activity.description}
                   </p>
-                  
-                  <div className="space-y-2 pt-4 border-t border-border">
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <MapPin className="w-4 h-4 mr-2" />
-                      {activity.location}
+                  <div className="space-y-2 md:space-y-3 text-sm md:text-base mb-4 md:mb-6">
+                    <div className="flex items-start gap-2">
+                      <MapPin className="w-4 h-4 md:w-5 md:h-5 text-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-muted-foreground">{activity.location}</span>
                     </div>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      {activity.date}
+                    <div className="flex items-start gap-2">
+                      <Calendar className="w-4 h-4 md:w-5 md:h-5 text-accent mt-0.5 flex-shrink-0" />
+                      <span className="text-muted-foreground">{activity.date}</span>
                     </div>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Users className="w-4 h-4 mr-2" />
-                      {activity.beneficiaries}
+                    <div className="flex items-start gap-2">
+                      <Users className="w-4 h-4 md:w-5 md:h-5 text-compassion mt-0.5 flex-shrink-0" />
+                      <span className="text-muted-foreground">{activity.beneficiaries}</span>
                     </div>
                   </div>
-                  
-                  <Button variant="outline" className="w-full mt-4" asChild>
-                    <Link to="/gallery">View in Gallery</Link>
-                  </Button>
+                  <Link to="/gallery">
+                    <Button variant="outline" className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors text-xs md:text-sm">
+                      View in Gallery
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             );
