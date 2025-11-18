@@ -125,75 +125,63 @@ const Projects = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="py-16 bg-gradient-to-br from-primary/10 to-hope/10">
+      <section className="py-12 md:py-16 bg-gradient-to-br from-primary/10 to-hope/10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 md:mb-6">
             Our Projects
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Discover our comprehensive humanitarian programs designed to create lasting positive 
-            change in communities across West Africa. Each project is carefully planned and 
-            executed with local partners to ensure maximum impact.
+          <p className="text-base md:text-lg text-muted-foreground">
+            Comprehensive humanitarian initiatives transforming lives across West Africa
           </p>
         </div>
       </section>
 
       {/* Project Categories */}
-      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="space-y-12">
+      <section className="py-12 md:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="space-y-12 md:space-y-16">
           {projectCategories.map((category) => {
-            const IconComponent = category.icon;
-            const colorClasses = getColorClasses(category.color);
-            
+            const Icon = category.icon;
             return (
-              <div key={category.id} className="space-y-6">
-                {/* Category Header */}
-                <div className={`border-l-4 ${colorClasses} pl-6`}>
-                  <div className="flex items-center space-x-4 mb-4">
-                    <div className={`w-12 h-12 bg-${category.color}/10 rounded-lg flex items-center justify-center`}>
-                      <IconComponent className={`w-6 h-6 ${colorClasses}`} />
-                    </div>
-                    <div>
-                      <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                        {category.title}
-                      </h2>
-                      <Badge variant="secondary" className="mt-2">
-                        {category.stats}
-                      </Badge>
-                    </div>
+              <div key={category.id} className={`border-l-4 ${getColorClasses(category.color)} pl-6 md:pl-8`}>
+                <div className="mb-6 md:mb-8">
+                  <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+                    <Icon className="w-8 h-8 md:w-10 md:h-10" />
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
+                      {category.title}
+                    </h2>
                   </div>
-                  <p className="text-muted-foreground text-lg">
+                  <p className="text-base md:text-lg text-muted-foreground mb-2 md:mb-3">
                     {category.description}
                   </p>
+                  <Badge variant="secondary" className="text-xs md:text-sm">
+                    {category.stats}
+                  </Badge>
                 </div>
 
-                {/* Project Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                   {category.projects.map((project, index) => (
-                    <Card key={index} className="hover:shadow-lg transition-all duration-300">
-                      <CardHeader className="pb-4">
-                        <div className="flex items-start justify-between mb-2">
-                          <CardTitle className="text-lg">{project.name}</CardTitle>
-                          <Badge className={getStatusColor(project.status)}>
-                            {project.status}
-                          </Badge>
-                        </div>
+                    <Card key={index} className="hover:shadow-md transition-shadow">
+                      <CardHeader className="pb-3 md:pb-4">
+                        <CardTitle className="text-lg md:text-xl mb-2">{project.name}</CardTitle>
+                        <Badge className={`${getStatusColor(project.status)} w-fit text-xs`}>
+                          {project.status}
+                        </Badge>
                       </CardHeader>
-                      
-                      <CardContent className="space-y-4">
-                        <div className="space-y-2 text-sm">
-                          <div className="flex items-center text-muted-foreground">
-                            <MapPin className="w-4 h-4 mr-2" />
-                            {project.location}
+                      <CardContent>
+                        <div className="space-y-2 md:space-y-3 text-sm md:text-base">
+                          <div className="flex items-start gap-2">
+                            <MapPin className="w-4 h-4 md:w-5 md:h-5 text-primary mt-0.5 flex-shrink-0" />
+                            <span className="text-muted-foreground">{project.location}</span>
                           </div>
-                          <div className="flex items-center text-muted-foreground">
-                            <Users className="w-4 h-4 mr-2" />
-                            {project.beneficiaries.toLocaleString()} beneficiaries
+                          <div className="flex items-start gap-2">
+                            <Users className="w-4 h-4 md:w-5 md:h-5 text-accent mt-0.5 flex-shrink-0" />
+                            <span className="text-muted-foreground">
+                              {project.beneficiaries.toLocaleString()} beneficiaries
+                            </span>
                           </div>
                         </div>
-                        
-                        <Button variant="outline" className="w-full" asChild>
-                          <Link to="/activities">View Details</Link>
+                        <Button variant="outline" className="w-full mt-4 md:mt-6 text-xs md:text-sm">
+                          View Details
                         </Button>
                       </CardContent>
                     </Card>
@@ -205,79 +193,61 @@ const Projects = () => {
         </div>
       </section>
 
-      {/* How We Work Section */}
-      <section className="py-16 bg-muted/30">
+      {/* How We Execute Projects */}
+      <section className="py-12 md:py-16 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 md:mb-4">
               How We Execute Projects
             </h2>
-            <p className="text-xl text-muted-foreground">
-              Our systematic approach ensures every project creates lasting impact
+            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
+              Our systematic approach ensures every project delivers maximum impact
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {[
               {
                 icon: Target,
                 title: "Assessment",
-                description: "Community needs assessment and stakeholder consultation"
-              },
-              {
-                icon: Wrench,
-                title: "Planning",
-                description: "Detailed project planning with local partners and timelines"
-              },
-              {
-                icon: Users,
-                title: "Implementation",
-                description: "Execution with continuous monitoring and community involvement"
+                description: "Identifying community needs and priorities through direct engagement",
+                step: "01"
               },
               {
                 icon: Calendar,
+                title: "Planning", 
+                description: "Developing detailed project roadmaps with clear timelines and goals",
+                step: "02"
+              },
+              {
+                icon: Wrench,
+                title: "Implementation",
+                description: "Executing projects with local coordinators and community involvement",
+                step: "03"
+              },
+              {
+                icon: Target,
                 title: "Evaluation",
-                description: "Impact assessment and sustainability planning for long-term success"
+                description: "Measuring impact and gathering feedback for continuous improvement",
+                step: "04"
               }
             ].map((step, index) => {
-              const IconComponent = step.icon;
+              const Icon = step.icon;
               return (
-                <Card key={index} className="text-center">
-                  <CardHeader>
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <IconComponent className="w-8 h-8 text-primary" />
-                    </div>
-                    <CardTitle className="text-xl">{step.title}</CardTitle>
+                <Card key={index} className="text-center relative overflow-hidden">
+                  <div className="absolute top-2 right-2 md:top-4 md:right-4 text-5xl md:text-6xl font-bold text-muted/10">
+                    {step.step}
+                  </div>
+                  <CardHeader className="pb-3 md:pb-4">
+                    <Icon className="w-10 h-10 md:w-12 md:h-12 text-primary mx-auto mb-3 md:mb-4" />
+                    <CardTitle className="text-lg md:text-xl">{step.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground">
-                      {step.description}
-                    </p>
+                    <p className="text-sm md:text-base text-muted-foreground">{step.description}</p>
                   </CardContent>
                 </Card>
               );
             })}
-          </div>
-        </div>
-      </section>
-
-      {/* Call to Action */}
-      <section className="py-16 bg-gradient-to-r from-compassion to-hope">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-compassion-foreground mb-6">
-            Support Our Mission
-          </h2>
-          <p className="text-xl text-compassion-foreground/90 mb-8">
-            Every project we undertake brings hope and positive change to communities in need. 
-            Join us in making a lasting difference.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="secondary" size="lg" asChild>
-              <Link to="/activities">View All Activities</Link>
-            </Button>
-            <Button variant="outline" size="lg" className="border-compassion-foreground text-compassion-foreground hover:bg-compassion-foreground hover:text-compassion" asChild>
-              <Link to="/contact">Contact Us</Link>
-            </Button>
           </div>
         </div>
       </section>
