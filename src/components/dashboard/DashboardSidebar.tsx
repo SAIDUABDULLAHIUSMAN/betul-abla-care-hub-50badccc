@@ -26,13 +26,15 @@ interface DashboardSidebarProps {
   setActiveSection: (section: string) => void;
   userRole: string;
   onLogout: () => void;
+  user: any;
 }
 
 export const DashboardSidebar = ({ 
   activeSection, 
   setActiveSection, 
   userRole, 
-  onLogout 
+  onLogout,
+  user
 }: DashboardSidebarProps) => {
   const { state } = useSidebar();
   const menuItems = [
@@ -54,36 +56,36 @@ export const DashboardSidebar = ({
   const isCollapsed = state === "collapsed";
 
   return (
-    <Sidebar className="border-r border-sidebar-border" collapsible="icon">
-      <div className="p-4 border-b border-sidebar-border">
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
-            <HandHeart className="h-4 w-4 text-primary-foreground" />
+    <Sidebar className="border-r border-border bg-card" collapsible="icon">
+      <div className="p-6 border-b border-border/50">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shrink-0 shadow-lg">
+            <HandHeart className="h-5 w-5 text-primary-foreground" />
           </div>
           {!isCollapsed && (
-            <div>
-              <h2 className="text-sm font-semibold text-sidebar-foreground">Betul Abla Foundation</h2>
-              <p className="text-xs text-sidebar-foreground/60">Admin Dashboard</p>
+            <div className="flex-1 min-w-0">
+              <h2 className="text-base font-bold text-foreground tracking-tight">Betul Abla</h2>
+              <p className="text-xs text-muted-foreground font-medium">Foundation</p>
             </div>
           )}
         </div>
       </div>
 
-      <SidebarContent>
+      <SidebarContent className="px-3 py-4">
         <SidebarGroup>
-          {!isCollapsed && <SidebarGroupLabel>Main Menu</SidebarGroupLabel>}
+          {!isCollapsed && <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider text-muted-foreground px-3 mb-2">Main Menu</SidebarGroupLabel>}
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.id}>
                   <SidebarMenuButton
                     onClick={() => setActiveSection(item.id)}
                     isActive={activeSection === item.id}
-                    className="w-full justify-start"
+                    className="w-full justify-start h-10 px-3 rounded-lg font-medium transition-all duration-200 hover:bg-accent/50"
                     tooltip={isCollapsed ? item.label : undefined}
                   >
                     <item.icon className="h-5 w-5 shrink-0" />
-                    {!isCollapsed && <span>{item.label}</span>}
+                    {!isCollapsed && <span className="text-sm">{item.label}</span>}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -92,20 +94,20 @@ export const DashboardSidebar = ({
         </SidebarGroup>
 
         {userRole === "admin" && (
-          <SidebarGroup>
-            {!isCollapsed && <SidebarGroupLabel>Admin</SidebarGroupLabel>}
+          <SidebarGroup className="mt-6">
+            {!isCollapsed && <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider text-muted-foreground px-3 mb-2">Admin</SidebarGroupLabel>}
             <SidebarGroupContent>
-              <SidebarMenu>
+              <SidebarMenu className="space-y-1">
                 {adminItems.map((item) => (
                   <SidebarMenuItem key={item.id}>
                     <SidebarMenuButton
                       onClick={() => setActiveSection(item.id)}
                       isActive={activeSection === item.id}
-                      className="w-full justify-start"
+                      className="w-full justify-start h-10 px-3 rounded-lg font-medium transition-all duration-200 hover:bg-accent/50"
                       tooltip={isCollapsed ? item.label : undefined}
                     >
                       <item.icon className="h-5 w-5 shrink-0" />
-                      {!isCollapsed && <span>{item.label}</span>}
+                      {!isCollapsed && <span className="text-sm">{item.label}</span>}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -115,33 +117,49 @@ export const DashboardSidebar = ({
         )}
 
         <SidebarGroup className="mt-auto">
+          {!isCollapsed && <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider text-muted-foreground px-3 mb-2">Account</SidebarGroupLabel>}
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={() => setActiveSection("settings")}
                   isActive={activeSection === "settings"}
-                  className="w-full justify-start"
+                  className="w-full justify-start h-10 px-3 rounded-lg font-medium transition-all duration-200 hover:bg-accent/50"
                   tooltip={isCollapsed ? "Settings" : undefined}
                 >
                   <Settings className="h-5 w-5 shrink-0" />
-                  {!isCollapsed && <span>Settings</span>}
+                  {!isCollapsed && <span className="text-sm">Settings</span>}
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={onLogout}
-                  className="w-full justify-start text-destructive hover:text-destructive"
+                  className="w-full justify-start h-10 px-3 rounded-lg font-medium transition-all duration-200 text-destructive hover:text-destructive hover:bg-destructive/10"
                   tooltip={isCollapsed ? "Logout" : undefined}
                 >
                   <LogOut className="h-5 w-5 shrink-0" />
-                  {!isCollapsed && <span>Logout</span>}
+                  {!isCollapsed && <span className="text-sm">Logout</span>}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      {/* User Profile Footer */}
+      {!isCollapsed && (
+        <div className="p-4 border-t border-border/50 mt-auto">
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+              <span className="text-sm font-semibold text-primary">{user?.email?.charAt(0).toUpperCase()}</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-foreground truncate">{user?.email}</p>
+              <p className="text-xs text-muted-foreground capitalize">{userRole}</p>
+            </div>
+          </div>
+        </div>
+      )}
     </Sidebar>
   );
 };
