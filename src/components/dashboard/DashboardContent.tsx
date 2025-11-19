@@ -45,5 +45,5 @@ export const DashboardContent = ({ activeSection, userRole }: DashboardContentPr
     }
   };
 
-  return <div className="space-y-6">{renderContent()}</div>;
+  return <div className="p-8 lg:p-12 max-w-[1600px] mx-auto">{renderContent()}</div>;
 };

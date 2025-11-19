@@ -63,79 +63,81 @@ export const DashboardOverview = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Dashboard Overview</h2>
-        <p className="text-muted-foreground">
+        <h1 className="text-4xl font-bold tracking-tight text-foreground">Dashboard Overview</h1>
+        <p className="text-base text-muted-foreground mt-2">
           Welcome to the Betul Abla Foundation management dashboard.
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {statCards.map((card) => (
-          <Card key={card.title}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+          <Card key={card.title} className="border-border/50 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
                 {card.title}
               </CardTitle>
-              <card.icon className={`h-4 w-4 ${card.color}`} />
+              <div className={`h-10 w-10 rounded-xl ${card.color} bg-opacity-10 flex items-center justify-center`}>
+                <card.icon className={`h-5 w-5 ${card.color}`} />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{card.value}</div>
+              <div className="text-3xl font-bold text-foreground">{card.value}</div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card className="border-border/50 shadow-sm">
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
+            <CardTitle className="text-xl font-bold">Recent Activity</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center space-x-4">
-                <div className="w-2 h-2 bg-compassion rounded-full"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">New orphan profile created</p>
-                  <p className="text-xs text-muted-foreground">2 hours ago</p>
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="w-2 h-2 bg-compassion rounded-full mt-2 shrink-0"></div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">New orphan profile created</p>
+                  <p className="text-xs text-muted-foreground mt-1">2 hours ago</p>
                 </div>
               </div>
-              <div className="flex items-center space-x-4">
-                <div className="w-2 h-2 bg-primary rounded-full"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Borehole project updated</p>
-                  <p className="text-xs text-muted-foreground">5 hours ago</p>
+              <div className="flex items-start gap-4">
+                <div className="w-2 h-2 bg-primary rounded-full mt-2 shrink-0"></div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">Borehole project updated</p>
+                  <p className="text-xs text-muted-foreground mt-1">5 hours ago</p>
                 </div>
               </div>
-              <div className="flex items-center space-x-4">
-                <div className="w-2 h-2 bg-hope rounded-full"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Community outreach event completed</p>
-                  <p className="text-xs text-muted-foreground">1 day ago</p>
+              <div className="flex items-start gap-4">
+                <div className="w-2 h-2 bg-hope rounded-full mt-2 shrink-0"></div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">Community outreach event completed</p>
+                  <p className="text-xs text-muted-foreground mt-1">1 day ago</p>
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-border/50 shadow-sm">
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
+            <CardTitle className="text-xl font-bold">Quick Actions</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              <button className="w-full text-left p-3 rounded-lg hover:bg-muted transition-colors">
-                <div className="font-medium">Add New Orphan</div>
-                <div className="text-sm text-muted-foreground">Register a new orphan profile</div>
+            <div className="space-y-3">
+              <button className="w-full text-left p-4 rounded-lg bg-accent/50 hover:bg-accent transition-colors duration-200">
+                <div className="font-semibold text-foreground">Add New Orphan</div>
+                <div className="text-sm text-muted-foreground mt-1">Register a new orphan profile</div>
               </button>
-              <button className="w-full text-left p-3 rounded-lg hover:bg-muted transition-colors">
-                <div className="font-medium">Create Borehole Project</div>
-                <div className="text-sm text-muted-foreground">Start a new water project</div>
+              <button className="w-full text-left p-4 rounded-lg bg-accent/50 hover:bg-accent transition-colors duration-200">
+                <div className="font-semibold text-foreground">Create Borehole Project</div>
+                <div className="text-sm text-muted-foreground mt-1">Start a new water project</div>
               </button>
-              <button className="w-full text-left p-3 rounded-lg hover:bg-muted transition-colors">
-                <div className="font-medium">Plan Outreach Activity</div>
-                <div className="text-sm text-muted-foreground">Organize community events</div>
+              <button className="w-full text-left p-4 rounded-lg bg-accent/50 hover:bg-accent transition-colors duration-200">
+                <div className="font-semibold text-foreground">Plan Outreach Activity</div>
+                <div className="text-sm text-muted-foreground mt-1">Organize community events</div>
               </button>
             </div>
           </CardContent>
