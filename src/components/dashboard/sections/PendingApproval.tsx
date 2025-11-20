@@ -5,10 +5,13 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Check, X, Eye } from "lucide-react";
+import { OrphanViewModal } from "../modals/OrphanViewModal";
 
 export const PendingApproval = () => {
   const [pendingItems, setPendingItems] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedOrphan, setSelectedOrphan] = useState<any>(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -54,10 +57,11 @@ export const PendingApproval = () => {
       if (error) throw error;
 
       setPendingItems(prev => prev.filter(item => item.id !== id));
+      setIsViewModalOpen(false);
       
       toast({
         title: "Success",
-        description: `Item ${action}d successfully.`,
+        description: `${type === 'orphan' ? 'Orphan profile' : 'Borehole project'} ${action}d successfully.`,
       });
     } catch (error) {
       console.error(`Error ${action}ing item:`, error);
@@ -67,6 +71,11 @@ export const PendingApproval = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleViewDetails = (item: any) => {
+    setSelectedOrphan(item);
+    setIsViewModalOpen(true);
   };
 
   if (isLoading) {
@@ -115,8 +124,9 @@ export const PendingApproval = () => {
                     size="sm" 
                     variant="outline"
                     className="flex-1"
+                    onClick={() => handleViewDetails(item)}
                   >
-                    <Eye className="h-3 w-3 mr-1" />
+                    <Eye className="h-4 w-4 mr-2" />
                     View Details
                   </Button>
                   <Button 
@@ -125,7 +135,7 @@ export const PendingApproval = () => {
                     onClick={() => handleApproval(item.id, item.type, 'approve')}
                     className="text-hope hover:text-hope"
                   >
-                    <Check className="h-3 w-3 mr-1" />
+                    <Check className="h-4 w-4 mr-2" />
                     Approve
                   </Button>
                   <Button 
@@ -134,7 +144,7 @@ export const PendingApproval = () => {
                     onClick={() => handleApproval(item.id, item.type, 'reject')}
                     className="text-destructive hover:text-destructive"
                   >
-                    <X className="h-3 w-3 mr-1" />
+                    <X className="h-4 w-4 mr-2" />
                     Reject
                   </Button>
                 </div>
@@ -143,6 +153,14 @@ export const PendingApproval = () => {
           ))}
         </div>
       )}
+
+      <OrphanViewModal
+        orphan={selectedOrphan}
+        isOpen={isViewModalOpen}
+        onOpenChange={setIsViewModalOpen}
+        onApprove={() => selectedOrphan && handleApproval(selectedOrphan.id, selectedOrphan.type, 'approve')}
+        onReject={() => selectedOrphan && handleApproval(selectedOrphan.id, selectedOrphan.type, 'reject')}
+      />
     </div>
   );
 };
