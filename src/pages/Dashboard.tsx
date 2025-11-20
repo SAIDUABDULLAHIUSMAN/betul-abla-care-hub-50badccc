@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { DashboardContent } from "@/components/dashboard/DashboardContent";
 import { useToast } from "@/hooks/use-toast";
@@ -59,20 +59,26 @@ const Dashboard = () => {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="min-h-screen flex w-full bg-background">
-        <DashboardSidebar 
-          activeSection={activeSection}
-          setActiveSection={setActiveSection}
-          userRole={userRole}
-          onLogout={handleLogout}
-          user={user}
-        />
-        <main className="flex-1 overflow-auto">
-          <DashboardContent 
-            activeSection={activeSection} 
+      <div className="min-h-screen flex flex-col w-full bg-background">
+        <header className="lg:hidden sticky top-0 z-50 h-14 flex items-center border-b border-border bg-card px-4">
+          <SidebarTrigger className="-ml-1" />
+          <h1 className="ml-3 text-lg font-semibold text-foreground">Dashboard</h1>
+        </header>
+        <div className="flex flex-1 w-full">
+          <DashboardSidebar 
+            activeSection={activeSection}
+            setActiveSection={setActiveSection}
             userRole={userRole}
+            onLogout={handleLogout}
+            user={user}
           />
-        </main>
+          <main className="flex-1 overflow-auto">
+            <DashboardContent 
+              activeSection={activeSection} 
+              userRole={userRole}
+            />
+          </main>
+        </div>
       </div>
     </SidebarProvider>
   );

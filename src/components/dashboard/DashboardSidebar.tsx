@@ -71,7 +71,7 @@ export const DashboardSidebar = ({
         </div>
       </div>
 
-      <SidebarContent className="px-3 py-4">
+      <SidebarContent className="px-3 py-4 pt-6">
         <SidebarGroup>
           {!isCollapsed && <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider text-muted-foreground px-3 mb-2">Main Menu</SidebarGroupLabel>}
           <SidebarGroupContent>
