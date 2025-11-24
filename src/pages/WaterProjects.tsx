@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Droplets, MapPin, Users, Calendar, Ruler } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Droplets, MapPin, Users, Calendar, Ruler, Search, Filter } from "lucide-react";
 import { format } from "date-fns";
 
 interface Borehole {
@@ -20,6 +22,9 @@ interface Borehole {
 const WaterProjects = () => {
   const [boreholes, setBoreholes] = useState<Borehole[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [yearFilter, setYearFilter] = useState("all");
 
   useEffect(() => {
     fetchBoreholes();
@@ -37,8 +42,42 @@ const WaterProjects = () => {
     setLoading(false);
   };
 
-  const totalBeneficiaries = boreholes.reduce((sum, b) => sum + (b.beneficiaries_count || 0), 0);
-  const completedProjects = boreholes.filter(b => b.status === "completed").length;
+  // Filter boreholes based on search term, status, and year
+  const filteredBoreholes = boreholes.filter((borehole) => {
+    // Search filter
+    const searchLower = searchTerm.toLowerCase();
+    const matchesSearch = 
+      borehole.community_name.toLowerCase().includes(searchLower) ||
+      borehole.location.toLowerCase().includes(searchLower) ||
+      (borehole.notes?.toLowerCase().includes(searchLower) ?? false) ||
+      (borehole.beneficiaries_count?.toString().includes(searchLower) ?? false);
+
+    // Status filter
+    const matchesStatus = statusFilter === "all" || borehole.status === statusFilter;
+
+    // Year filter
+    let matchesYear = true;
+    if (yearFilter !== "all" && borehole.completion_date) {
+      const completionYear = new Date(borehole.completion_date).getFullYear().toString();
+      matchesYear = completionYear === yearFilter;
+    } else if (yearFilter !== "all" && !borehole.completion_date) {
+      matchesYear = false;
+    }
+
+    return matchesSearch && matchesStatus && matchesYear;
+  });
+
+  // Get unique years from completion dates for filter dropdown
+  const availableYears = Array.from(
+    new Set(
+      boreholes
+        .filter(b => b.completion_date)
+        .map(b => new Date(b.completion_date!).getFullYear())
+    )
+  ).sort((a, b) => b - a);
+
+  const totalBeneficiaries = filteredBoreholes.reduce((sum, b) => sum + (b.beneficiaries_count || 0), 0);
+  const completedProjects = filteredBoreholes.filter(b => b.status === "completed").length;
 
   return (
     <>
@@ -69,8 +108,10 @@ const WaterProjects = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             <Card className="text-center border-primary/20">
               <CardContent className="pt-6">
-                <div className="text-4xl font-bold text-primary mb-2">{boreholes.length}</div>
-                <div className="text-muted-foreground">Total Projects</div>
+                <div className="text-4xl font-bold text-primary mb-2">{filteredBoreholes.length}</div>
+                <div className="text-muted-foreground">
+                  {searchTerm || statusFilter !== "all" || yearFilter !== "all" ? "Filtered" : "Total"} Projects
+                </div>
               </CardContent>
             </Card>
             <Card className="text-center border-compassion/20">
@@ -94,20 +135,110 @@ const WaterProjects = () => {
       {/* Projects Section */}
       <section className="py-16 px-6">
         <div className="container mx-auto max-w-6xl">
-          <header className="text-center mb-12">
+          <header className="text-center mb-8">
             <h2 className="text-3xl font-bold mb-4 text-foreground">Our Water Projects</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Sustainable water solutions bringing life-changing access to clean water in communities that need it most.
             </p>
           </header>
 
+          {/* Filters Section */}
+          <div className="mb-8 space-y-4">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+              <Filter className="w-4 h-4" />
+              <span className="font-medium">Filter Projects</span>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Search Input */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Search by community, location, notes..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+
+              {/* Status Filter */}
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Statuses" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="in_progress">In Progress</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {/* Year Filter */}
+              <Select value={yearFilter} onValueChange={setYearFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Years" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Years</SelectItem>
+                  {availableYears.map((year) => (
+                    <SelectItem key={year} value={year.toString()}>
+                      {year}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Active Filters Display */}
+            {(searchTerm || statusFilter !== "all" || yearFilter !== "all") && (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-sm text-muted-foreground">Active filters:</span>
+                {searchTerm && (
+                  <Badge variant="secondary" className="gap-1">
+                    Search: {searchTerm}
+                  </Badge>
+                )}
+                {statusFilter !== "all" && (
+                  <Badge variant="secondary" className="gap-1">
+                    Status: {statusFilter}
+                  </Badge>
+                )}
+                {yearFilter !== "all" && (
+                  <Badge variant="secondary" className="gap-1">
+                    Year: {yearFilter}
+                  </Badge>
+                )}
+              </div>
+            )}
+          </div>
+
           {loading ? (
             <div className="text-center py-12 text-muted-foreground">Loading projects...</div>
-          ) : boreholes.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">No water projects available yet.</div>
+          ) : filteredBoreholes.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground mb-2">
+                {boreholes.length === 0 
+                  ? "No water projects available yet." 
+                  : "No projects match your filters."}
+              </p>
+              {boreholes.length > 0 && (
+                <button
+                  onClick={() => {
+                    setSearchTerm("");
+                    setStatusFilter("all");
+                    setYearFilter("all");
+                  }}
+                  className="text-primary hover:underline text-sm"
+                >
+                  Clear all filters
+                </button>
+              )}
+            </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {boreholes.map((borehole) => (
+              {filteredBoreholes.map((borehole) => (
                 <Card key={borehole.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="aspect-video bg-gradient-to-br from-primary/10 to-trust/10 relative">
                     {borehole.photo_url ? (
