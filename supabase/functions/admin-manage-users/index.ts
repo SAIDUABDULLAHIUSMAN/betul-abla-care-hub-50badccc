@@ -13,8 +13,8 @@ serve(async (req) => {
 
   try {
     const supabaseClient = createClient(
-      Denv.get("SUPABASE_URL") ?? "",
-      Denv.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
       {
         auth: {
           persistSession: false,
@@ -121,7 +121,7 @@ serve(async (req) => {
       const { error: resetError } = await supabaseClient.auth.resetPasswordForEmail(
         targetUser.email,
         {
-          redirectTo: `${Denv.get("SUPABASE_URL")}/auth/v1/verify`,
+          redirectTo: `${Deno.env.get("SUPABASE_URL")}/auth/v1/verify`,
         }
       );
 
