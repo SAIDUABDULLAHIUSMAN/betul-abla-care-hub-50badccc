@@ -14,19 +14,19 @@ const About = () => {
       description: "Leading humanitarian efforts across West Africa with dedicated focus on orphan care and community development."
     },
     {
-      name: "Ibrahim Adebayo",
+      name: "Aminu Usman",
       role: "Nigeria Coordinator",
-      location: "Lagos, Nigeria",
+      location: "Kano, Nigeria",
       description: "Overseeing food distribution programs and educational support for orphans across Nigeria."
     },
     {
-      name: "Kwame Asante",
+      name: "Ahmad Mahmud",
       role: "Ghana Coordinator", 
       location: "Accra, Ghana",
       description: "Managing borehole projects and community outreach programs throughout Ghana."
     },
     {
-      name: "Aminata Diallo",
+      name: "Aminatu sani",
       role: "Ivory Coast Coordinator",
       location: "Abidjan, Ivory Coast",
       description: "Coordinating animal slaughter programs and food distribution in Ivory Coast communities."
@@ -60,7 +60,7 @@ const About = () => {
       <section className="py-12 md:py-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 md:mb-6">Our Story</h2>
         <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-          Betul Abla Foundation was born from a deep commitment to humanitarian service. Founded in Belgium with 
+          Betul Abla Foundation is an NGO based in Belgium whci was born from a deep commitment to humanitarian service. With heart in Belgium with 
           coordinators across Nigeria, Ghana, and Ivory Coast, we bridge continents to deliver compassionate aid 
           where it's needed most. Our work focuses on feeding the needy, supporting orphans through education, 
           providing clean water access via boreholes, and strengthening communities across West Africa.
