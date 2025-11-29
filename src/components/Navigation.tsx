@@ -7,11 +7,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, X, Heart, ChevronDown, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
+import { Menu, X, Heart, ChevronDown, Facebook, Instagram, Twitter, Youtube, Moon, Sun } from "lucide-react";
+import { useTheme } from "@/providers/ThemeProvider";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { theme, setTheme } = useTheme();
+
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
 
   const navigation = [
     { name: "Home", href: "/" },
@@ -111,6 +117,21 @@ const Navigation = () => {
               })}
             </div>
             
+            {/* Theme Toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+              className="w-8 h-8 rounded-full hover:bg-muted"
+            >
+              {theme === "light" ? (
+                <Moon className="w-4 h-4" />
+              ) : (
+                <Sun className="w-4 h-4" />
+              )}
+            </Button>
+            
             {/* Auth Buttons */}
             <Button variant="outline" size="sm" asChild>
               <Link to="/login">Login</Link>
@@ -173,8 +194,8 @@ const Navigation = () => {
               )
             ))}
             
-            {/* Mobile Social Links */}
-            <div className="flex justify-center space-x-4 pt-4 pb-2 border-t border-border">
+            {/* Mobile Social Links & Theme Toggle */}
+            <div className="flex justify-center items-center space-x-4 pt-4 pb-2 border-t border-border">
               {socialLinks.map((social, index) => {
                 const IconComponent = social.icon;
                 return (
@@ -188,6 +209,21 @@ const Navigation = () => {
                   </a>
                 );
               })}
+              
+              {/* Theme Toggle */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleTheme}
+                aria-label="Toggle theme"
+                className="w-10 h-10 rounded-full hover:bg-muted"
+              >
+                {theme === "light" ? (
+                  <Moon className="w-5 h-5" />
+                ) : (
+                  <Sun className="w-5 h-5" />
+                )}
+              </Button>
             </div>
             
             {/* Mobile Auth Buttons */}
